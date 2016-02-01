@@ -4,8 +4,27 @@ const ourOptions = [
   'limit',
   'offset',
   'page',
-  'tail'
+  'tail',
+  'sort'
 ]
+
+const applySort = (q, sort) => {
+  if (!Array.isArray(sort)) {
+    if (typeof sort !== 'string') {
+      throw new Error('sort must be a string or array')
+    }
+    sort = sort.split(',')
+  }
+
+  let r = q._r
+  let orderBy = sort.map((prop) =>
+    prop.indexOf('-') === 0
+      ? r.desc({ index: prop.substring(1) })
+      : r.asc({ index: prop })
+  )
+
+  return q.orderBy(...orderBy)
+}
 
 export default (Model, options) => {
   let filter = omit(options, ourOptions)
@@ -14,6 +33,9 @@ export default (Model, options) => {
   if (options.page) offset += options.page * limit
 
   let q = Model.filter(filter)
+  if (options.sort) {
+    q = applySort(q, options.sort)
+  }
   if (options.tail) {
     q = q.changes()
   } else {
