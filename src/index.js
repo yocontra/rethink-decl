@@ -19,8 +19,8 @@ const applySort = (q, sort) => {
   let r = q._r
   let orderBy = sort.map((prop) =>
     prop.indexOf('-') === 0
-      ? r.desc({ index: prop.substring(1) })
-      : r.asc({ index: prop })
+      ? r.desc(prop.substring(1))
+      : r.asc(prop)
   )
 
   return q.orderBy(...orderBy)

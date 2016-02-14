@@ -20,7 +20,7 @@ var applySort = function applySort(q, sort) {
 
   var r = q._r;
   var orderBy = sort.map(function (prop) {
-    return prop.indexOf('-') === 0 ? r.desc({ index: prop.substring(1) }) : r.asc({ index: prop });
+    return prop.indexOf('-') === 0 ? r.desc(prop.substring(1)) : r.asc(prop);
   });
 
   return q.orderBy.apply(q, orderBy);
