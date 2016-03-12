@@ -14,12 +14,20 @@ npm install rethink-decl --save
 
 - `model` is a thinky model object
 - `options` is your object full of options
-  - `limit` - Number, maximum number of results per page (Defaults to 100)
-  - `offset` - Number, which offset to start reading from (Defaults to 0)
-  - `page` - Number, what page to read
-  - `tail` - Boolean, set to true if you want a `changes()` feed back
+  - `limit`
+    - Type: Number
+    - Controls maximum number of results
+  - `offset`
+    - Type: Number
+    - Controls which offset to start reading from
+  - `sort`
+    - Type: Array of field names or comma-separated field names
+    - Ascending by default
+    - Prefix field names with - for descending
   - Any other options will be treated as a filters
 - Returns the query
+
+Be advised: There is no default limit. All results will be returned.
 
 ## Example
 
@@ -36,10 +44,15 @@ var User = thinky.createModel('User', {
 })
 
 // find me 5 users with the name 'Eric'
+// start at offset 5
+// this is equiv to fetching page #2
 decl(User, {
   limit: 5,
-  page: 0,
-  name: 'Eric'
+  offset: 5,
+  name: 'Eric',
+  sort: [
+    '-age'
+  ]
 }).run(function(err, data){
   // do stuff with it
 })

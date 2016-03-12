@@ -3,11 +3,8 @@ import omit from 'lodash.omit'
 const ourOptions = [
   'limit',
   'offset',
-  'page',
-  'tail',
   'sort'
 ]
-
 const applySort = (q, sort) => {
   if (!Array.isArray(sort)) {
     if (typeof sort !== 'string') {
@@ -16,8 +13,8 @@ const applySort = (q, sort) => {
     sort = sort.split(',')
   }
 
-  let r = q._r
-  let orderBy = sort.map((prop) =>
+  const r = q._r
+  const orderBy = sort.map((prop) =>
     prop.indexOf('-') === 0
       ? r.desc(prop.substring(1))
       : r.asc(prop)
@@ -27,19 +24,17 @@ const applySort = (q, sort) => {
 }
 
 export default (Model, options) => {
-  let filter = omit(options, ourOptions)
-  let limit = +options.limit || 100
-  let offset = +options.offset || 0
-  if (options.page) offset += options.page * limit
+  const filter = omit(options, ourOptions)
 
   let q = Model.filter(filter)
   if (options.sort) {
     q = applySort(q, options.sort)
   }
-  if (options.tail) {
-    q = q.changes()
-  } else {
-    q = q.slice(offset, offset + limit)
+
+  if (options.offset != null) {
+    q = q.slice(options.offset, options.offset + (options.limit || 0))
+  } else if (options.limit != null) {
+    q = q.slice(0, options.limit)
   }
 
   return q

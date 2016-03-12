@@ -8,8 +8,7 @@ var _lodash2 = _interopRequireDefault(_lodash);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var ourOptions = ['limit', 'offset', 'page', 'tail', 'sort'];
-
+var ourOptions = ['limit', 'offset', 'sort'];
 var applySort = function applySort(q, sort) {
   if (!Array.isArray(sort)) {
     if (typeof sort !== 'string') {
@@ -28,18 +27,16 @@ var applySort = function applySort(q, sort) {
 
 exports.default = function (Model, options) {
   var filter = (0, _lodash2.default)(options, ourOptions);
-  var limit = +options.limit || 100;
-  var offset = +options.offset || 0;
-  if (options.page) offset += options.page * limit;
 
   var q = Model.filter(filter);
   if (options.sort) {
     q = applySort(q, options.sort);
   }
-  if (options.tail) {
-    q = q.changes();
-  } else {
-    q = q.slice(offset, offset + limit);
+
+  if (options.offset != null) {
+    q = q.slice(options.offset, options.offset + (options.limit || 0));
+  } else if (options.limit != null) {
+    q = q.slice(0, options.limit);
   }
 
   return q;
