@@ -34,9 +34,11 @@ exports.default = function (Model, options) {
   }
 
   if (options.offset != null) {
-    q = q.slice(options.offset, options.offset + (options.limit || 0));
+    var offset = parseInt(options.offset);
+    var limit = options.limit ? parseInt(options.limit) : 0;
+    q = q.slice(offset, offset + limit);
   } else if (options.limit != null) {
-    q = q.slice(0, options.limit);
+    q = q.slice(0, parseInt(options.limit));
   }
 
   return q;
